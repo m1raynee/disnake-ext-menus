@@ -25,7 +25,7 @@ DEALINGS IN THE SOFTWARE.
 """
 
 import asyncio
-import discord
+import disnake
 
 import itertools
 import inspect
@@ -106,7 +106,7 @@ class First(Position):
 _custom_emoji = re.compile(r'<?(?P<animated>a)?:?(?P<name>[A-Za-z0-9\_]+):(?P<id>[0-9]{13,20})>?')
 
 def _cast_emoji(obj, *, _custom_emoji=_custom_emoji):
-    if isinstance(obj, discord.PartialEmoji):
+    if isinstance(obj, disnake.PartialEmoji):
         return obj
 
     obj = str(obj)
@@ -116,8 +116,8 @@ def _cast_emoji(obj, *, _custom_emoji=_custom_emoji):
         animated = bool(groups['animated'])
         emoji_id = int(groups['id'])
         name = groups['name']
-        return discord.PartialEmoji(name=name, animated=animated, id=emoji_id)
-    return discord.PartialEmoji(name=obj, id=None, animated=False)
+        return disnake.PartialEmoji(name=name, animated=animated, id=emoji_id)
+    return disnake.PartialEmoji(name=obj, id=None, animated=False)
 
 class Button:
     """Represents a reaction-style button for the :class:`Menu`.
@@ -338,7 +338,7 @@ class Menu(metaclass=_MenuMeta):
         self._lock = asyncio.Lock()
         self._event = asyncio.Event()
 
-    @discord.utils.cached_property
+    @disnake.utils.cached_property
     def buttons(self):
         """Retrieves the buttons that are to be used for this menu session.
 
@@ -399,7 +399,7 @@ class Menu(metaclass=_MenuMeta):
                     # Add the reaction
                     try:
                         await self.message.add_reaction(button.emoji)
-                    except discord.HTTPException:
+                    except disnake.HTTPException:
                         raise
                     else:
                         # Update the cache to have the value
@@ -616,7 +616,7 @@ class Menu(metaclass=_MenuMeta):
                     for button_emoji in self.buttons:
                         try:
                             await self.message.remove_reaction(button_emoji, self.__me)
-                        except discord.HTTPException:
+                        except disnake.HTTPException:
                             continue
             except Exception:
                 pass
@@ -698,7 +698,7 @@ class Menu(metaclass=_MenuMeta):
         channel = channel or ctx.channel
         me = channel.guild.me if hasattr(channel, 'guild') else ctx.bot.user
         permissions = channel.permissions_for(me)
-        self.__me = discord.Object(id=me.id)
+        self.__me = disnake.Object(id=me.id)
         self._verify_permissions(ctx, channel, permissions)
         self._event.clear()
         msg = self.message
@@ -935,12 +935,12 @@ class MenuPages(Menu):
         return self._source.is_paginating()
 
     async def _get_kwargs_from_page(self, page):
-        value = await discord.utils.maybe_coroutine(self._source.format_page, self, page)
+        value = await disnake.utils.maybe_coroutine(self._source.format_page, self, page)
         if isinstance(value, dict):
             return value
         elif isinstance(value, str):
             return { 'content': value, 'embed': None }
-        elif isinstance(value, discord.Embed):
+        elif isinstance(value, disnake.Embed):
             return { 'embed': value, 'content': None }
 
     async def show_page(self, page_number):

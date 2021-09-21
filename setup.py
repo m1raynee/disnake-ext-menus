@@ -2,7 +2,7 @@ from setuptools import setup
 import re
 
 version = ''
-with open('discord/ext/menus/__init__.py') as f:
+with open('disnake/ext/menus/__init__.py') as f:
     version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE).group(1)
 
 if not version:
@@ -25,13 +25,13 @@ if version.endswith(('a', 'b', 'rc')):
     except Exception:
         pass
 
-setup(name='discord-ext-menus',
+setup(name='disnake-ext-menus',
       author='Rapptz',
-      url='https://github.com/Rapptz/discord-ext-menus',
+      url='https://github.com/m1raynee/disnake-ext-menus',
       version=version,
-      packages=['discord.ext.menus'],
+      packages=['disnake.ext.menus'],
       license='MIT',
-      description='An extension module to make reaction based menus with discord.py',
-      install_requires=['discord.py>=1.2.5'],
+      description='An extension module to make reaction based menus with disnake',
+      install_requires=['disnake>=1.2.5'],
       python_requires='>=3.5.3'
 )
